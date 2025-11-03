@@ -104,10 +104,10 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
-const auth = require('../middleware/auth'); 
+const auth = require('../middleware/auth');
 
 const router = express.Router();
-const SECRET = process.env.JWT_SECRET || 'supersecretkey'; 
+const SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
 // login 
 router.post('/login', (req, res) => {
@@ -123,7 +123,7 @@ router.post('/login', (req, res) => {
       return res.status(401).json({ message: 'Invalid name or password' });
 
     const user = results[0];
-    const valid =password=== user.password;
+    const valid = password === user.password;
     if (!valid)
       return res.status(401).json({ message: 'Invalid name or password' });
 
@@ -158,7 +158,7 @@ router.get('/view', auth, (req, res) => {
   });
 });
 
-// -------------------- UPDATE USER --------------------
+// ----------------- UPDATE USER -------------------
 router.post('/update', auth, (req, res) => {
   const { id, name, message, date } = req.body;
   if (!id) return res.status(400).json({ message: 'ID required' });
