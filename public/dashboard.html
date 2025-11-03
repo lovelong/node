@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <h2>Dashboard</h2>
+    <div class="buttons">
+      <button onclick="showForm('add')">Add</button>
+      <button onclick="showForm('view')">View</button>
+      <button onclick="showForm('update')">Update</button>
+      <button onclick="showForm('delete')">Delete</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <div id="forms"></div>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'login.html';
+
+    function showForm(action) {
+      const forms = document.getElementById('forms');
+      const output = document.getElementById('output');
+      output.innerHTML = ''; // clear previous table
+
+      let html = '';
+
+      if (action === 'add') {
+        html = `
+          <h3>Add User</h3>
+          <input id="add-id" placeholder="ID">
+          <input id="add-name" placeholder="Name">
+          <input id="add-message" placeholder="Message">
+          <input id="add-date" type="date">
+          <button onclick="addUser()">Submit</button>`;
+      } else if (action === 'update') {
+        html = `
+          <h3>Update User</h3>
+          <input id="update-id" placeholder="ID">
+          <input id="update-name" placeholder="Name">
+          <input id="update-message" placeholder="Message">
+          <input id="update-date" type="date">
+          <button onclick="updateUser()">Submit</button>`;
+      } else if (action === 'delete') {
+        html = `
+          <h3>Delete User</h3>
+          <input id="delete-id" placeholder="User ID">
+          <button onclick="deleteUser()">Delete</button>`;
+      } else if (action === 'view') {
+        viewUsers();
+      }
+
+      forms.innerHTML = html;
+    }
+
+    async function addUser() {
+      const body = {
+        id: document.getElementById('add-id').value,
+        name: document.getElementById('add-name').value,
+        message: document.getElementById('add-message').value,
+        date: document.getElementById('add-date').value
+      };
+
+      const res = await fetch('/api/users/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      alert(data.message);
+    }
+
+    async function updateUser() {
+      const body = {
+        id: document.getElementById('update-id').value,
+        name: document.getElementById('update-name').value,
+        message: document.getElementById('update-message').value,
+        date: document.getElementById('update-date').value
+      };
+
+      const res = await fetch('/api/users/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      alert(data.message);
+    }
+
+    async function deleteUser() {
+      const body = { id: document.getElementById('delete-id').value };
+      const res = await fetch('/api/users/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      alert(data.message);
+    }
+
+    async function viewUsers() {
+      const res = await fetch('/api/users/view', {
+        method: 'get',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const users = await res.json();
+      const out = document.getElementById('output');
+      out.innerHTML = `<table border="1"><tr><th>ID</th><th>Name</th><th>Message</th><th>Date</th></tr>` +
+        users.map(u => `<tr><td>${u.id}</td><td>${u.name}</td><td>${u.message}</td><td>${u.date}</td></tr>`).join('') +
+        '</table>';
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+
+</html>

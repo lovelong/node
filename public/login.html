@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <h2>Login</h2>
+    <input type="text" id="name" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    async function login() {
+      const name = document.getElementById('name').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, password })
+      });
+
+      const data = await res.json();
+      document.getElementById('msg').innerText = data.message;
+
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        window.location.href = 'dashboard.html';
+      }
+    }
+  </script>
+</body>
+
+</html>

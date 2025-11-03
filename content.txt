@@ -1,0 +1,6 @@
+create login page userr name -passwd with authenication
+user - id, name,message,date  
+add,delete, update, view
+delete -id
+update id+details,
+view -just view button
