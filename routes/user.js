@@ -158,7 +158,7 @@ router.get('/view', auth, (req, res) => {
   });
 });
 
-// ----------------- UPDATE USER -------------------
+// ------sfgtfdss----------- UPDATE USER -------------------
 router.post('/update', auth, (req, res) => {
   const { id, name, message, date } = req.body;
   if (!id) return res.status(400).json({ message: 'ID required' });
